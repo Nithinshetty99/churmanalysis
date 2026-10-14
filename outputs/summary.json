@@ -1,0 +1,94 @@
+{
+  "customers": 10000,
+  "share_ever_churned": 0.4693,
+  "avg_monthly_logo_churn_pct": 3.007080383173678,
+  "final_mrr": 3189114.4,
+  "best_gbm": {
+    "max_depth": 3,
+    "learning_rate": 0.03
+  },
+  "test_metrics": {
+    "baseline (tenure + contract)": {
+      "roc_auc": 0.5463268985708962,
+      "pr_auc": 0.09710486315542763,
+      "brier": 0.07729529007774798,
+      "brier_skill": -0.0005800470653898326,
+      "log_loss": 0.29040048688388453,
+      "lift_top10": 1.2261476623651364,
+      "recall_top10": 0.12269938650306748,
+      "recall_top20": 0.24130879345603273,
+      "base_rate": 0.08436853002070394,
+      "n": 5796
+    },
+    "logistic regression (all features)": {
+      "roc_auc": 0.6543832411797051,
+      "pr_auc": 0.15277024027951133,
+      "brier": 0.07523506993983041,
+      "brier_skill": 0.026089303169134492,
+      "log_loss": 0.27757254703023465,
+      "lift_top10": 2.2275015866299976,
+      "recall_top10": 0.2229038854805726,
+      "recall_top20": 0.36809815950920244,
+      "base_rate": 0.08436853002070394,
+      "n": 5796
+    },
+    "gradient boosting (depth=3, lr=0.03)": {
+      "roc_auc": 0.6924800866856793,
+      "pr_auc": 0.16538860996210955,
+      "brier": 0.07447292753317789,
+      "brier_skill": 0.03595516283990963,
+      "log_loss": 0.27188784974262586,
+      "lift_top10": 2.3501163528665114,
+      "recall_top10": 0.23517382413087934,
+      "recall_top20": 0.4049079754601227,
+      "base_rate": 0.08436853002070394,
+      "n": 5796
+    }
+  },
+  "did": {
+    "did_pp": 1.390273919286094,
+    "ci_low": 0.8453286533092222,
+    "ci_high": 1.8687588822436938,
+    "rates_pct": {
+      "control_pre": 2.809280260914684,
+      "control_post": 2.8398680835470866,
+      "treated_pre": 2.4579025110782866,
+      "treated_post": 3.878764252996784
+    },
+    "pre_window": [
+      24,
+      29
+    ],
+    "post_window": [
+      30,
+      35
+    ]
+  },
+  "true_price_effect_pp": 1.3229564925329216,
+  "campaign_best": [
+    {
+      "strategy": "by expected revenue at risk",
+      "contacted": 1656,
+      "pct_contacted": 28.571428571428573,
+      "realized_net": 186324.3000000004
+    },
+    {
+      "strategy": "by risk",
+      "contacted": 1774,
+      "pct_contacted": 30.607315389924086,
+      "realized_net": 150887.6000000008
+    },
+    {
+      "strategy": "random",
+      "contacted": 473,
+      "pct_contacted": 8.1608005521049,
+      "realized_net": 855.7599999999657
+    }
+  ],
+  "recovery_cover": {
+    "A": 8,
+    "B": 11,
+    "C": 11
+  },
+  "recovery_terms": 12
+}

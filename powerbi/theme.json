@@ -1,0 +1,21 @@
+{
+  "name": "Churn Analytics",
+  "dataColors": ["#1F4E79", "#C0392B", "#2E86C1", "#E67E22", "#1E8449", "#7F8C8D", "#8E44AD", "#F1C40F"],
+  "background": "#FFFFFF",
+  "foreground": "#1B2631",
+  "tableAccent": "#1F4E79",
+  "good": "#1E8449",
+  "neutral": "#E67E22",
+  "bad": "#C0392B",
+  "textClasses": {
+    "title":   { "fontFace": "Segoe UI Semibold", "fontSize": 14, "color": "#1B2631" },
+    "label":   { "fontFace": "Segoe UI", "fontSize": 11, "color": "#566573" },
+    "callout": { "fontFace": "Segoe UI Semibold", "fontSize": 28, "color": "#1F4E79" }
+  },
+  "visualStyles": {
+    "*": { "*": {
+      "title": [ { "show": true, "fontSize": 14, "fontColor": { "solid": { "color": "#1B2631" } } } ],
+      "border": [ { "show": false } ]
+    } }
+  }
+}

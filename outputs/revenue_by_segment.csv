@@ -1,0 +1,7 @@
+plan,contract,customers,billed_to_date,billed_per_customer,avg_observed_months
+Premium,Monthly,1288,19951628.0,15490.0,14.8
+Standard,Monthly,2222,19084859.0,8589.0,13.7
+Standard,Annual,1324,14884192.0,11242.0,17.9
+Premium,Annual,681,13304582.0,19537.0,18.7
+Basic,Monthly,2970,12672218.0,4266.0,14.3
+Basic,Annual,1515,8269443.0,5458.0,18.3

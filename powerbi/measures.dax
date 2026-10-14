@@ -1,0 +1,125 @@
+// =====================================================================================
+// DAX measures for the Churn dashboard.
+// Create an empty table first (Home > Enter data, name it "_Measures", no columns needed),
+// then add each measure below via Modeling > New measure (paste one at a time).
+//
+// MODEL (Model view):
+//   dim_date[month]            1 --> *  fact_customer_month[month]            (single direction)
+//   dim_customer[customer_id]  1 --> *  fact_customer_month[customer_id]      (single direction)
+//   dim_customer[customer_id]  1 --> 1  at_risk_customers[customer_id]        (single direction)
+//   hazard_by_tenure, cohort_retention, survival_curves, price_event_study stay unrelated.
+//   Mark dim_date as the Date table (Table tools > Mark as date table > month).
+//
+// KEY IDEA: churn is measured per customer-month (churners / customers active that month).
+// For one month this is the usual "logo churn %"; across many months it is the average monthly rate.
+// It is NOT "% of customers who ever churned", which depends on how long each group was observed.
+// =====================================================================================
+
+
+// ------------------------------ Customers --------------------------------------------
+Customer-Months = COUNTROWS ( fact_customer_month )
+
+Customers Served =
+DISTINCTCOUNT ( fact_customer_month[customer_id] )          // customers active at any point in the selected period
+
+Active Customers (Period End) =
+VAR LastMonth = MAX ( dim_date[month] )
+RETURN CALCULATE ( DISTINCTCOUNT ( fact_customer_month[customer_id] ), dim_date[month] = LastMonth )
+
+Customers Churned = SUM ( fact_customer_month[churned_this_month] )
+
+New Customers = SUM ( fact_customer_month[is_new_customer] )
+
+Currently Active Customers =                                // today's live base; ignores the date slicer on purpose
+CALCULATE ( COUNTROWS ( dim_customer ), dim_customer[status] = "Active" )
+
+Customers Churned (All Time) =
+CALCULATE ( COUNTROWS ( dim_customer ), dim_customer[status] = "Churned" )
+
+
+// ------------------------------ Churn rate -------------------------------------------
+Monthly Churn Rate =                                        // format 0.00%
+DIVIDE ( [Customers Churned], [Customer-Months] )
+
+Churn Rate 3M Avg =                                         // smooths month-to-month noise; format 0.00%
+AVERAGEX (
+    DATESINPERIOD ( dim_date[month], MAX ( dim_date[month] ), -3, MONTH ),
+    [Monthly Churn Rate]
+)
+
+Overall Monthly Churn Rate =                                // benchmark: all segments, same dates
+CALCULATE ( [Monthly Churn Rate], ALL ( dim_customer ) )
+
+Churn vs Overall (pp) =                                     // positive = worse than average; format 0.00
+( [Monthly Churn Rate] - [Overall Monthly Churn Rate] ) * 100
+
+Churn Status Colour =                                       // for conditional formatting of bars
+SWITCH ( TRUE (),
+    [Churn vs Overall (pp)] >=  0.5, "#C0392B",             // clearly worse than average
+    [Churn vs Overall (pp)] <= -0.5, "#1E8449",             // clearly better than average
+    "#7F8C8D" )                                             // close to average
+
+
+// ------------------------------ Revenue ----------------------------------------------
+Billed Revenue = SUM ( fact_customer_month[mrr] )
+
+MRR (Period End) =
+VAR LastMonth = MAX ( dim_date[month] )
+RETURN CALCULATE ( SUM ( fact_customer_month[mrr] ), dim_date[month] = LastMonth )
+
+Churned MRR =
+CALCULATE ( SUM ( fact_customer_month[mrr] ), fact_customer_month[churned_this_month] = 1 )
+
+Revenue Churn Rate = DIVIDE ( [Churned MRR], [Billed Revenue] )   // format 0.00%
+
+Avg Revenue per Customer-Month = DIVIDE ( [Billed Revenue], [Customer-Months] )
+
+
+// ------------------------------ Price increase (difference-in-differences) -----------
+// Same windows as the Python analysis: 6 months before (idx 24-29) vs 6 months after (idx 30-35)
+// the Jul-2025 price rise; treated = Standard/Premium, control = Basic.
+Churn Treated Before =
+CALCULATE ( [Monthly Churn Rate],
+    dim_customer[price_group] = "Standard/Premium (+10% from Jul 2025)",
+    dim_date[month_idx] >= 24 && dim_date[month_idx] <= 29 )
+
+Churn Treated After =
+CALCULATE ( [Monthly Churn Rate],
+    dim_customer[price_group] = "Standard/Premium (+10% from Jul 2025)",
+    dim_date[month_idx] >= 30 && dim_date[month_idx] <= 35 )
+
+Churn Control Before =
+CALCULATE ( [Monthly Churn Rate],
+    dim_customer[price_group] = "Basic (no price change)",
+    dim_date[month_idx] >= 24 && dim_date[month_idx] <= 29 )
+
+Churn Control After =
+CALCULATE ( [Monthly Churn Rate],
+    dim_customer[price_group] = "Basic (no price change)",
+    dim_date[month_idx] >= 30 && dim_date[month_idx] <= 35 )
+
+Price Increase Effect (pp) =                                // expected: about +1.39; format 0.00
+( ( [Churn Treated After] - [Churn Treated Before] ) - ( [Churn Control After] - [Churn Control Before] ) ) * 100
+
+
+// ------------------------------ At-risk customers (live base) ------------------------
+// risk_pct = model-estimated probability of leaving within the next 3 months.
+High-Risk Customers =
+CALCULATE ( COUNTROWS ( at_risk_customers ), at_risk_customers[risk_band] = "High" )
+
+MRR at Risk (High Risk) =
+CALCULATE ( SUM ( at_risk_customers[mrr_at_risk] ), at_risk_customers[risk_band] = "High" )
+
+Expected Churners Next 3M =                                 // sum of individual probabilities
+SUMX ( at_risk_customers, at_risk_customers[risk_pct] / 100 )
+
+Avg Risk % = AVERAGE ( at_risk_customers[risk_pct] )
+
+
+// ------------------------------ Dynamic titles (clear labels for non-technical users)
+Title - Churn Trend =
+"Monthly churn rate: share of active customers who left that month"
+
+Title - Segment =
+"Average monthly churn by segment (red = worse than average, green = better)  |  Overall: "
+    & FORMAT ( [Overall Monthly Churn Rate], "0.0%" )

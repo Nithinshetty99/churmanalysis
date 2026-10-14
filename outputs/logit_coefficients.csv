@@ -1,0 +1,24 @@
+feature,coefficient
+cat__contract_Annual,-0.8812273113831043
+cat__channel_Referral,-0.579132091390056
+cat__plan_Basic,-0.4968122141970303
+cat__location_Semi-Urban,-0.4544096923712084
+cat__location_Rural,-0.40380346796950817
+cat__plan_Standard,-0.3482222879405213
+cat__channel_Organic,-0.3273314507772544
+cat__plan_Premium,-0.2649105749701678
+cat__location_Urban,-0.25173191676707196
+cat__contract_Monthly,-0.22871776572461447
+num__age,-0.21415359815692905
+num__usage_vs_lifetime,-0.2070827379960253
+num__price_vs_base,0.1565710724884144
+num__usage_3m_avg,-0.14298957340571494
+num__sessions_3m,-0.12588229323524475
+num__tickets_3m,0.12509469649509186
+cat__channel_Paid Search,-0.10946821684716034
+num__tenure_months,-0.10410349421500102
+cat__channel_Social,-0.09401331809323826
+num__usage_trend,0.03999698143850314
+num__failed_3m,0.03639327730546066
+num__missingindicator_usage_trend,-0.031216943865865623
+num__mrr,-0.027579780800421873

@@ -1,0 +1,18 @@
+dimension,level,customers,churned,pct_ever_churned,monthly_churn_pct
+age_band,18-24,1277,692,54.2,3.8
+age_band,25-34,2514,1283,51.0,3.42
+age_band,35-44,3249,1533,47.2,3.01
+age_band,45-54,2054,855,41.6,2.5
+age_band,55+,906,330,36.4,2.15
+channel,Organic,3472,1558,44.9,2.82
+channel,Paid Search,2503,1279,51.1,3.42
+channel,Referral,2042,817,40.0,2.37
+channel,Social,1983,1039,52.4,3.57
+contract,Annual,3520,1181,33.6,1.84
+contract,Monthly,6480,3512,54.2,3.82
+location,Rural,2557,1116,43.6,2.67
+location,Semi-Urban,3005,1410,46.9,2.96
+location,Urban,4438,2167,48.8,3.25
+plan,Basic,4485,2024,45.1,2.89
+plan,Premium,1969,894,45.4,2.81
+plan,Standard,3546,1775,50.1,3.27
